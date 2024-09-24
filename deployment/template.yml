@@ -33,7 +33,7 @@ Resources:
   TriggerAmplifyBuild:
     Type: Custom::TriggerAmplifyBuild
     Properties:
-      ServiceToken: !GetAtt 'TriggerBuildLambda.Arn'
+      ServiceToken: !GetAtt "TriggerBuildLambda.Arn"
       appId: !GetAtt AmplifyApp.AppId
       branchName: main
       branch: !GetAtt AmplifyBranch.Arn
@@ -57,13 +57,13 @@ Resources:
               - sts:AssumeRole
       Path: /
       ManagedPolicyArns:
-        - "arn:aws:iam::aws:policy/AdministratorAccess" 
+        - "arn:aws:iam::aws:policy/AdministratorAccess"
 
   AmplifyApp:
     Type: "AWS::Amplify::App"
     Properties:
       Name: TEAM-IDC-APP
-      Repository: !Sub https://git-codecommit.${AWS::Region}.amazonaws.com/v1/repos/team-idc-app
+      Repository: https://github.com/sebastianhutter/iam-identity-center-team-experiment.git
       Description: Temporary Elevated Access Management Application
       CustomRules:
         - Source: /<*>
@@ -72,10 +72,9 @@ Resources:
         - Source: </^[^.]+$|\.(?!(css|gif|ico|jpg|js|png|txt|svg|woff|ttf|map|json)$)([^.]+$)/>
           Status: 200
           Target: /index.html
-      EnvironmentVariables: 
+      EnvironmentVariables:
         - Name: AMPLIFY_DESTRUCTIVE_UPDATES
           Value: true
-
 
       BuildSpec: |-
         version: 1
@@ -120,7 +119,7 @@ Resources:
       BranchName: main
       AppId: !GetAtt AmplifyApp.AppId
       EnableAutoBuild: true
-      EnvironmentVariables: 
+      EnvironmentVariables:
         - Name: SSO_LOGIN
           Value: !Ref Login
         - Name: TEAM_ACCOUNT
@@ -143,7 +142,7 @@ Resources:
       Tags:
         - Key: Branch
           Value: main
-  
+
   TriggerBuildLambda:
     Type: AWS::Lambda::Function
     Properties:
@@ -168,7 +167,7 @@ Resources:
               logger.info("Received event: %s" % json.dumps(event))
               appId = event['ResourceProperties']['appId']
               branchName = event['ResourceProperties']['branchName']
-          
+
               result = cfnresponse.SUCCESS
               try:
                   if event['RequestType'] == 'Create' or event['RequestType'] == 'Update':
@@ -191,29 +190,25 @@ Resources:
       AssumeRolePolicyDocument:
         Version: 2012-10-17
         Statement:
-          -
-            Effect: Allow
+          - Effect: Allow
             Principal:
               Service: lambda.amazonaws.com
             Action: sts:AssumeRole
       Policies:
-        -
-          PolicyName: AmplifyLambdaPolicy
+        - PolicyName: AmplifyLambdaPolicy
           PolicyDocument:
             Version: 2012-10-17
             Statement:
-              -
-                Sid: AllowLogging
+              - Sid: AllowLogging
                 Effect: Allow
                 Action:
                   - "logs:CreateLogGroup"
                   - "logs:CreateLogStream"
                   - "logs:PutLogEvents"
                 Resource: "*"
-              -
-                Sid: startBuild
+              - Sid: startBuild
                 Effect: Allow
-                Action: 
+                Action:
                   - "amplify:StartJob"
                 Resource: "*"
 Outputs:
