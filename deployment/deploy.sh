@@ -24,6 +24,7 @@ set -xe
 # fi
 
 # cd ..
+# ewfwefwef
 
 # aws codecommit create-repository --region $REGION --repository-name team-idc-app --repository-description "Temporary Elevated Access Management (TEAM) Application"
 # git remote remove origin
