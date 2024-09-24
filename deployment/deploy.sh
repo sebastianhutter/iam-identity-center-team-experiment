@@ -30,7 +30,6 @@ set -xe
 # git remote add origin codecommit::$REGION://team-idc-app
 # git push origin main
 
-cd ./deployment
 if [[ ! -z "$TAGS" ]]; then
   if [[ ! -z "$UI_DOMAIN" ]]; then
     aws cloudformation deploy --region $REGION --template-file template.yml \

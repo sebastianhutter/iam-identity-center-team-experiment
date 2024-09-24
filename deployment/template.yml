@@ -64,6 +64,7 @@ Resources:
     Properties:
       Name: TEAM-IDC-APP
       Repository: https://github.com/sebastianhutter/iam-identity-center-team-experiment.git
+      AccessToken: ghp_classic_access_token
       Description: Temporary Elevated Access Management Application
       CustomRules:
         - Source: /<*>
